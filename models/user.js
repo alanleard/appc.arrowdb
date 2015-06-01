@@ -80,6 +80,11 @@ module.exports = Arrow.Model.extend("appc.arrowdb/user", {
 			"type": String,
 			"description": "Specifies the owner of object."
 		},
+		"su_id": {
+			// "originalType": "",
+			"type": String,
+			"description": "User ID to update this user on behalf of"
+		},
 		//NOTE: added manually
 		password: { type: String, hidden: true },
 		password_confirmation: { type: String, hidden: true, copy_field:'password' }
@@ -220,6 +225,11 @@ module.exports = Arrow.Model.extend("appc.arrowdb/user", {
 				{
 					"name": "acl_id",
 					"description": "ID of an ACLs to associate with this object.\n\nAn ACL can be specified using `acl_name` or `acl_id`. The two parameters are\nmutually exclusive.\n",
+					"type": "String"
+				},
+				{
+					"name": "su_id",
+					"description": "User ID to update this user on behalf of.\n\nThe current login user must be an application admin to update a user on behalf of another user.\n",
 					"type": "String"
 				},
 				{
@@ -584,6 +594,9 @@ module.exports = Arrow.Model.extend("appc.arrowdb/user", {
 					password: params.password
 				};
 			case 'update':
+				if(params.su_id){
+					defaultValue.su_id = params.su_id;
+				}
 				defaultValue.user_id = instance.getPrimaryKey();
 				return defaultValue;
 			case 'delete':
